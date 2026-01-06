@@ -1,0 +1,48 @@
+# Basic Airflow Worker configuration for VSCode debug.
+# WARNING: This configuration is for local development. Do not use it in a production deployment.
+x-airflow-common:
+  &airflow-common
+  image: ${AIRFLOW_IMAGE_NAME}
+  user: "${AIRFLOW_UID:-50000}:0"
+  environment:
+    &airflow-common-env
+    AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.session'
+    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
+    AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
+    AIRFLOW__CORE__DAGBAG_IMPORT_TIMEOUT: 0
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+    AIRFLOW__CORE__DAGS_FOLDER: '/opt/airflow/dags'
+    AIRFLOW__CORE__PLUGINS_FOLDER: '/opt/airflow/plugins'
+    AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+    AIRFLOW__CORE__FERNET_KEY: ${FERNET_KEY}
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__LOGGING__BASE_LOG_FOLDER: '/opt/airflow/.logs'
+    AIRFLOW__LOGGING__LOGGING_LEVEL: INFO
+    # AIRFLOW__SMTP__SMTP_HOST: ${SMTP_HOST}
+    # AIRFLOW__SMTP__SMTP_PORT: ${SMTP_PORT}
+    # AIRFLOW__SMTP__SMTP_USER: ${SMTP_USER}
+    # AIRFLOW__SMTP__SMTP_PASSWORD: ${SMTP_PASSWORD}
+    # AIRFLOW__SMTP__SMTP_MAIL_FROM: ${SMTP_SENDER_EMAIL}
+    AIRFLOW__WEBSERVER__SECRET_KEY: ${SECRET_KEY}
+    PIPELINE_ORQUESTRATOR: airflow
+    PIPELINE_CONFIG_TYPE: json
+  volumes:
+    - .:/opt/airflow
+    - "./.storage:/opt/airflow/.storage"
+    # - "./.temp/airflow/airflow:/home/airflow/.local/lib/python3.9/site-packages/airflow"
+    - "./plugins/framework-dataflow/framework_dataflow:/home/airflow/.local/lib/python3.9/site-packages/framework_dataflow"
+
+services:
+  airflow-worker-debug:
+    <<: *airflow-common
+    command: celery worker
+    hostname: ${HOSTNAME}
+    ports:
+      - 8090:8080
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    restart: "no"
