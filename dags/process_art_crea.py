@@ -109,15 +109,16 @@ process_contract_task = DockerOperator(
     tty=True,
     command=[
         'python', 'main.py',
-        '--dados-os-json', '{{ dag_run.conf.get("dados_os_json") }}',
-        # '--arquivo-pdf-base64', '{{ dag_run.conf.get("arquivo_pdf_base64") }}',
+        '--os-json', '{{ dag_run.conf.get("dados_os_json") }}',
         '--user', '{{ dag_run.conf.get("user") }}',
         '--password', '{{ dag_run.conf.get("password") }}',
         '--cnpj-cliente', '{{ dag_run.conf.get("cnpj_cliente") }}',
         '--cod-contrato', '{{ dag_run.conf.get("cod_contrato") }}',
         '--data-contrato', '{{ dag_run.conf.get("data_contrato") }}',
+        '--conselho', '{{ dag_run.conf.get("conselho") }}',
         '--crea-uf', '{{ dag_run.conf.get("crea_uf") }}',
         '--execution-id', '{{ dag_run.conf.get("execution_id") }}',
+        '--considerar-deslocamento-doc-rt', '{{ dag_run.conf.get("considerar_deslocamento_doc_rt", "false") }}',
         '--headless'
     ],
     mounts=[
@@ -129,11 +130,11 @@ process_contract_task = DockerOperator(
             type='bind'
         )
     ],
-        environment={
-        # Dados grandes passados via environment variables para evitar "argument list too long"
-        'DADOS_OS_JSON': '{{ dag_run.conf.get("dados_os_json") }}',
-        'ARQUIVO_PDF_BASE64': '{{ dag_run.conf.get("arquivo_pdf_base64") }}',
-    },
+        # environment={
+        # # Dados grandes passados via environment variables para evitar "argument list too long"
+        # 'DADOS_OS_JSON': '{{ dag_run.conf.get("dados_os_json") }}',
+        # 'ARQUIVO_PDF_BASE64': '{{ dag_run.conf.get("arquivo_pdf_base64") }}',
+    # },
     working_dir='/app',
     docker_url='unix://var/run/docker.sock',
     network_mode='containers-network',
