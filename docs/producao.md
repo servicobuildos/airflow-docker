@@ -275,9 +275,7 @@ curl -X POST "https://airflow.exemplo.com/api/v1/dags/process_art_rrt/dagRuns" \
       "data_contrato": "05/04/2026",
       "conselho": "CAU",
       "crea_uf": "RN",
-      "execution_id": "exec-rrt-001",
-      "dag_run_id": "Exec_RRT_001",
-      "considerar_deslocamento_doc_rt": "false"
+      "execution_id": "exec-rrt-001"
     }
   }'
 ```
