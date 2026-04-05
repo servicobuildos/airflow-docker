@@ -47,7 +47,7 @@ x-airflow-common:
   image: ${AIRFLOW_IMAGE_NAME}
   user: "${AIRFLOW_UID:-50000}:0"
   group_add:
-    - "${DOCKER_GID:-996}"  # Adiciona o grupo docker ao usuário
+    - "988"  # GID atual de /var/run/docker.sock no host
   environment:
     &airflow-common-env
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
