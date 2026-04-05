@@ -327,4 +327,3 @@ volumes:
 
 networks:
   containers-network:
-    external: true

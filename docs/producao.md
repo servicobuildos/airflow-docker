@@ -37,8 +37,7 @@ Antes de promover para produção, trate estes pontos obrigatoriamente:
 6. Segredos sensíveis estão parametrizados por `.env`; em produção eles devem sair de arquivo local simples e ir para um cofre de segredos.
 7. `postgres` e `redis` estão expostos por portas do host; isso deve ser restringido à rede privada, salvo necessidade operacional explícita.
 8. Não há política de backup, retenção de logs, monitoramento, alerta ou procedimento de rollback documentados no repositório.
-9. A rede `containers-network` é externa e precisa existir previamente; isso deve ser automatizado ou gerenciado pela infraestrutura.
-10. A DAG depende do contrato de CLI do `main.py` do app externo; qualquer mudança no app pode quebrar a execução da task.
+9. A DAG depende do contrato de CLI do `main.py` do app externo; qualquer mudança no app pode quebrar a execução da task.
 
 ## Decisões de Arquitetura Recomendadas
 
