@@ -162,6 +162,7 @@ AIRFLOW_UID=50000
 AIRFLOW_IMAGE_NAME=registry.exemplo.com/airflow-docker/airflow:2026.04.05-1
 APP_DOCKER_IMAGE=registry.exemplo.com/art-rrt-bot/app:2026.04.05-1
 APP_DOCKER_FORCE_PULL=true
+APP_DOCKER_NETWORK=buildos-odoo-dev_airflow-process-doc-rt_rede-odoo
 HOST_STORAGE_PATH=/srv/airflow/storage
 HOST_APP_PATH=/srv/art-rrt-bot/app
 SMTP_HOST=smtp.exemplo.com
@@ -178,6 +179,7 @@ Observações:
 - `DAG_DEBUG_MODE=true` não deve ser mantido em produção sem necessidade justificada.
 - `HOST_APP_PATH` deve apontar para artefato controlado e versionado.
 - `AIRFLOW_IMAGE_NAME` deve apontar para registry privado.
+- `APP_DOCKER_NETWORK` deve apontar para o nome real da rede Docker existente no host.
 
 ## Fluxo Recomendado de Implantação
 

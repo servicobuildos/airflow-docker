@@ -50,7 +50,7 @@ from docker.types import Mount
 DAG_ID = 'process_art_rrt'
 DEFAULT_HOST_APP_PATH = '/home/djyllier/gonz.ai/buildos/airflow-docker/app'
 DEFAULT_DOCKER_IMAGE = 'art-rrt-bot-app:latest'
-DOCKER_NETWORK = 'containers-network'
+DEFAULT_DOCKER_NETWORK = 'rede-odoo'
 APP_MOUNT_TARGET = '/app'
 
 
@@ -88,6 +88,11 @@ def get_force_pull() -> bool:
     }
 
 
+def get_docker_network() -> str:
+    """Resolve a rede Docker do app a partir do ambiente."""
+    return os.getenv('APP_DOCKER_NETWORK', DEFAULT_DOCKER_NETWORK)
+
+
 def build_process_command() -> list[str]:
     """Monta a linha de comando do container com templates do Airflow."""
     return [
@@ -122,6 +127,7 @@ def build_process_command() -> list[str]:
 HOST_APP_PATH = get_host_app_path()
 DOCKER_IMAGE = get_docker_image()
 FORCE_PULL_IMAGE = get_force_pull()
+DOCKER_NETWORK = get_docker_network()
 
 default_args = {
     'owner': 'airflow',
