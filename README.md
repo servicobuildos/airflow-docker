@@ -4,6 +4,10 @@ Este documento tem como objetivo guiar a instalação e configuração do ambien
 
 Este projeto foi testado no `Mac OS Monterey 12.1` com Python `3.9`.
 
+## Produção
+
+O guia completo para preparação, endurecimento, implantação, operação e rollback em produção está em [docs/producao.md](docs/producao.md).
+
 ## Estrutura do Projeto
 
 **Item**                                  |**Descrição**
