@@ -23,7 +23,7 @@ Hoje o repositório sobe os seguintes componentes via Docker Compose:
 - `airflow-worker`: execução assíncrona das tasks;
 - `airflow-init`: bootstrap do banco e do usuário inicial.
 
-A DAG `process_art_rrt` usa `DockerOperator` para subir o container `art_boot-app:latest`, montando um diretório do host em `/app` a partir da variável `HOST_APP_PATH`.
+A DAG `process_art_rrt` usa `DockerOperator` para subir o container `art-rrt-bot-app:latest`, montando um diretório do host em `/app` a partir da variável `HOST_APP_PATH`.
 
 ## Restrições e Gaps do Estado Atual
 
@@ -70,7 +70,7 @@ Observação: com o desenho atual, o uso de `DockerOperator` e `docker.sock` dif
 ### 1. Imagens e Versionamento
 
 - Publicar a imagem do Airflow em registry privado com tag imutável, por exemplo `registry.exemplo.com/airflow-docker/airflow:2026.04.05-1`.
-- Publicar a imagem do app `art_boot-app` também com tag imutável.
+- Publicar a imagem do app `art-rrt-bot-app` também com tag imutável.
 - Proibir uso de `latest` em produção.
 - Registrar a combinação aprovada entre a versão da DAG e a versão do app externo.
 
@@ -115,7 +115,7 @@ Este é o principal ponto de atenção operacional do projeto atual.
 
 - O valor de `HOST_APP_PATH` aponta para um diretório externo ao repositório do Airflow.
 - Em produção, esse código não deve depender de um path manual em disco fora do artefato implantado.
-- Preferência 1: embutir tudo que o `art_boot-app` precisa dentro da própria imagem do app.
+- Preferência 1: embutir tudo que o `art-rrt-bot-app` precisa dentro da própria imagem do app.
 - Preferência 2: publicar um artefato versionado e montar somente dados, nunca código-fonte solto do host.
 - Documentar claramente qual commit do app corresponde a cada release do Airflow.
 
@@ -160,6 +160,8 @@ Exemplo conceitual. Ajuste aos nomes e mecanismos da sua plataforma:
 ENVIRONMENT=prod
 AIRFLOW_UID=50000
 AIRFLOW_IMAGE_NAME=registry.exemplo.com/airflow-docker/airflow:2026.04.05-1
+APP_DOCKER_IMAGE=registry.exemplo.com/art-rrt-bot/app:2026.04.05-1
+APP_DOCKER_FORCE_PULL=true
 HOST_STORAGE_PATH=/srv/airflow/storage
 HOST_APP_PATH=/srv/art-rrt-bot/app
 SMTP_HOST=smtp.exemplo.com
@@ -183,7 +185,7 @@ Observações:
 
 1. Congelar versões do Airflow, providers e dependências Python.
 2. Buildar a imagem do Airflow.
-3. Buildar a imagem do app `art_boot-app`.
+3. Buildar a imagem do app `art-rrt-bot-app`.
 4. Publicar ambas em registry privado.
 5. Registrar as tags aprovadas no changelog de release.
 

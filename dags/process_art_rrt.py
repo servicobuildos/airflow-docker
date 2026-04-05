@@ -49,7 +49,7 @@ from docker.types import Mount
 
 DAG_ID = 'process_art_rrt'
 DEFAULT_HOST_APP_PATH = '/home/djyllier/gonz.ai/buildos/airflow-docker/app'
-DOCKER_IMAGE = 'art_boot-app:latest'
+DEFAULT_DOCKER_IMAGE = 'art-rrt-bot-app:latest'
 DOCKER_NETWORK = 'containers-network'
 APP_MOUNT_TARGET = '/app'
 
@@ -71,6 +71,21 @@ def get_host_app_path() -> str:
         return str(local_app_path)
 
     return DEFAULT_HOST_APP_PATH
+
+
+def get_docker_image() -> str:
+    """Resolve a imagem Docker do app a partir do ambiente."""
+    return os.getenv('APP_DOCKER_IMAGE', DEFAULT_DOCKER_IMAGE)
+
+
+def get_force_pull() -> bool:
+    """Converte a flag de pull para bool aceitando valores comuns de ambiente."""
+    return os.getenv('APP_DOCKER_FORCE_PULL', 'false').strip().lower() in {
+        '1',
+        'true',
+        'yes',
+        'on',
+    }
 
 
 def build_process_command() -> list[str]:
@@ -105,6 +120,8 @@ def build_process_command() -> list[str]:
 
 
 HOST_APP_PATH = get_host_app_path()
+DOCKER_IMAGE = get_docker_image()
+FORCE_PULL_IMAGE = get_force_pull()
 
 default_args = {
     'owner': 'airflow',
@@ -143,6 +160,7 @@ process_contract_task = DockerOperator(
     working_dir=APP_MOUNT_TARGET,
     docker_url='unix://var/run/docker.sock',
     network_mode=DOCKER_NETWORK,
+    force_pull=FORCE_PULL_IMAGE,
     mount_tmp_dir=False,
     dag=dag,
 )
