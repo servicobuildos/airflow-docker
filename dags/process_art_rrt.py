@@ -11,6 +11,7 @@ Configuração esperada em `dag_run.conf`:
 - `conselho`
 - `crea_uf`
 - `execution_id`
+- `considerar_deslocamento_doc_rt` (opcional)
 
 O diretório do aplicativo montado no container é resolvido pela variável de
 ambiente `HOST_APP_PATH`. Quando ela não estiver definida, a DAG usa um caminho
@@ -115,6 +116,10 @@ def build_process_command() -> list[str]:
         '{{ dag_run.conf.get("crea_uf") }}',
         '--execution-id',
         '{{ dag_run.conf.get("execution_id") }}',
+        '--dag-run-id',
+        '{{ dag_run.conf.get("dag_run_id") }}',
+        '--considerar-deslocamento-doc-rt',
+        '{{ dag_run.conf.get("considerar_deslocamento_doc_rt", "false") }}',
         '--headless',
     ]
 
