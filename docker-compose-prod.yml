@@ -73,7 +73,7 @@ x-airflow-common:
     HOST_APP_PATH: ${HOST_APP_PATH:-/home/djyllier/gonz.ai/airflow-docker/app}  # Caminho do app no host
     APP_DOCKER_IMAGE: ${APP_DOCKER_IMAGE:-art-rrt-bot-app:latest}  # Imagem executada pela DAG process_art_rrt
     APP_DOCKER_FORCE_PULL: ${APP_DOCKER_FORCE_PULL:-false}  # Forca pull da imagem do app quando necessario
-    APP_DOCKER_NETWORK: ${APP_DOCKER_NETWORK:-buildos-odoo-dev_airflow-process-doc-rt_rede-odoo}  # Rede Docker usada pela DAG no servidor
+    APP_DOCKER_NETWORK: ${APP_DOCKER_NETWORK:-buildos-odoo_airflow_rede-odoo}  # Rede Docker usada pela DAG no servidor
   volumes:
     - ./dags:/opt/airflow/dags
     - ./.logs:/opt/airflow/.logs
