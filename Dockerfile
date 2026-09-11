@@ -4,7 +4,13 @@ ENV IMAGE_BUILD_VERSION 2.4.3.0
 
 USER root
 
-RUN apt -y update && \
+# usa o snapshot fixo do Debian (já referenciado no sources.list da imagem) em vez do
+# mirror "live", que remove pacotes antigos do bullseye e causa 404 em apt install
+RUN sed -i \
+        -e 's|^# deb http://snapshot.debian.org|deb http://snapshot.debian.org|g' \
+        -e '/^deb http:\/\/deb.debian.org/d' \
+        /etc/apt/sources.list && \
+    apt -o Acquire::Check-Valid-Until=false -y update && \
     apt install -y --no-install-recommends \
         # dependência para o ambiente de desenvolvimento
         git && \

@@ -12,6 +12,8 @@ Configuração esperada em `dag_run.conf`:
 - `crea_uf`
 - `execution_id`
 - `considerar_deslocamento_doc_rt` (opcional)
+- `n_registro_conselho_empresa` (opcional)
+- `n_registro_conselho_pf` (opcional)
 
 O diretório do aplicativo montado no container é resolvido pela variável de
 ambiente `HOST_APP_PATH`. Quando ela não estiver definida, a DAG usa um caminho
@@ -33,7 +35,9 @@ curl -X POST "http://localhost:8080/api/v1/dags/process_art_crea/dagRuns" \
       "data_contrato": "17/01/2025",
       "conselho": "CREA",
       "crea_uf": "RN",
-      "execution_id": "exec-123"
+      "execution_id": "exec-123",
+      "n_registro_conselho_empresa": "123456",
+      "n_registro_conselho_pf": "654321"
     }
   }'
 ```
@@ -98,6 +102,8 @@ def build_process_command() -> list[str]:
     return [
         'python',
         'main.py',
+        '--dag-run-id',
+        '{{ dag_run.conf.get("dag_run_id") }}',
         '--os-json',
         '{{ dag_run.conf.get("dados_os_json") }}',
         '--user',
@@ -110,16 +116,18 @@ def build_process_command() -> list[str]:
         '{{ dag_run.conf.get("cod_contrato") }}',
         '--data-contrato',
         '{{ dag_run.conf.get("data_contrato") }}',
-        '--conselho',
-        '{{ dag_run.conf.get("conselho") }}',
-        '--crea-uf',
-        '{{ dag_run.conf.get("crea_uf") }}',
-        '--execution-id',
-        '{{ dag_run.conf.get("execution_id") }}',
-        '--dag-run-id',
-        '{{ dag_run.conf.get("dag_run_id") }}',
         '--considerar-deslocamento-doc-rt',
         '{{ dag_run.conf.get("considerar_deslocamento_doc_rt", "false") }}',
+        '--crea-uf',
+        '{{ dag_run.conf.get("crea_uf") }}',
+        '--conselho',
+        '{{ dag_run.conf.get("conselho") }}',
+        '--n-registro-conselho-empresa',
+        '{{ dag_run.conf.get("n_registro_conselho_empresa", "") }}',
+        '--n-registro-conselho-pf',
+        '{{ dag_run.conf.get("n_registro_conselho_pf", "") }}',
+        '--execution-id',
+        '{{ dag_run.conf.get("execution_id") }}',
         '--headless',
     ]
 
