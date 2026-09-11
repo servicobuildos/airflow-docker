@@ -4,7 +4,7 @@ ENV IMAGE_BUILD_VERSION 2.4.3.0
 
 USER root
 
-RUN apt -y update && \
+RUN apt -o Acquire::Check-Valid-Until=false -y update && \
     apt install -y --no-install-recommends \
         # dependência para o ambiente de desenvolvimento
         git && \
