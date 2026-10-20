@@ -5,11 +5,13 @@ ENV IMAGE_BUILD_VERSION 2.4.3.0
 USER root
 
 # usa o snapshot fixo do Debian (já referenciado no sources.list da imagem) em vez do
-# mirror "live", que remove pacotes antigos do bullseye e causa 404 em apt install
+# mirror "live", que remove pacotes antigos do bullseye e causa 404 em apt install.
+# remove o repo do PostgreSQL (pgdg), que não publica mais bullseye e quebra o apt update
 RUN sed -i \
         -e 's|^# deb http://snapshot.debian.org|deb http://snapshot.debian.org|g' \
         -e '/^deb http:\/\/deb.debian.org/d' \
         /etc/apt/sources.list && \
+    rm -f /etc/apt/sources.list.d/pgdg.list && \
     apt -o Acquire::Check-Valid-Until=false -y update && \
     apt install -y --no-install-recommends \
         # dependência para o ambiente de desenvolvimento
