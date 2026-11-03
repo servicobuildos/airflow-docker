@@ -67,6 +67,8 @@ x-airflow-common:
     AIRFLOW__SMTP__SMTP_MAIL_FROM: ${SMTP_SENDER_EMAIL}
     AIRFLOW__WEBSERVER__SECRET_KEY: ${SECRET_KEY}
     AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL: 10
+    AIRFLOW__CELERY__WORKER_CONCURRENCY: 8  # padrão 16
+    AIRFLOW__WEBSERVER__WORKERS: 2  # padrão 4 workers gunicorn
     PIPELINE_ORQUESTRATOR: airflow
     PIPELINE_CONFIG_TYPE: json
     HOST_STORAGE_PATH: ${HOST_STORAGE_PATH}  # Caminho do host para bind mounts do DockerOperator
@@ -130,7 +132,7 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
-    restart: "no"
+    restart: "unless-stopped"
     networks:
       - rede-odoo
     depends_on:
@@ -143,10 +145,10 @@ services:
     command: scheduler
     healthcheck:
       test: ["CMD-SHELL", 'airflow jobs check --job-type SchedulerJob --hostname "$${HOSTNAME}"']
-      interval: 10s
-      timeout: 10s
+      interval: 60s
+      timeout: 30s
       retries: 5
-    restart: "no"
+    restart: "unless-stopped"
     networks:
       - rede-odoo
     extra_hosts:
@@ -164,8 +166,8 @@ services:
       test:
         - "CMD-SHELL"
         - 'celery --app airflow.executors.celery_executor.app inspect ping -d "celery@$${HOSTNAME}"'
-      interval: 10s
-      timeout: 10s
+      interval: 60s
+      timeout: 30s
       retries: 5
     environment:
       <<: *airflow-common-env
