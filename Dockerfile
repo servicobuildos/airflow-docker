@@ -12,8 +12,12 @@ RUN sed -i \
         -e '/^deb http:\/\/deb.debian.org/d' \
         /etc/apt/sources.list && \
     rm -f /etc/apt/sources.list.d/pgdg.list && \
-    apt -o Acquire::Check-Valid-Until=false -y update && \
-    apt install -y --no-install-recommends \
+    # Retries/Timeout: o snapshot.debian.org é instável e derrubava o build com exit code 100
+    apt -o Acquire::Check-Valid-Until=false \
+        -o Acquire::Retries=5 \
+        -o Acquire::http::Timeout=60 \
+        -y update && \
+    apt -o Acquire::Retries=5 install -y --no-install-recommends \
         # dependência para o ambiente de desenvolvimento
         git && \
     # clean

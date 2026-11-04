@@ -78,7 +78,7 @@ x-airflow-common:
     APP_DOCKER_NETWORK: ${APP_DOCKER_NETWORK:-buildos-odoo_airflow_rede-odoo}  # Rede Docker usada pela DAG no servidor
   volumes:
     - ./dags:/opt/airflow/dags
-    - ./.logs:/opt/airflow/.logs
+    - ./.logs:/opt/airflow/logs  # pasta onde o Airflow grava os logs das tasks (compartilhada entre webserver/worker)
     - ./.storage:/opt/airflow/.storage
     - ./plugins/framework-dataflow/framework_dataflow:/home/airflow/.local/lib/python3.9/site-packages/framework_dataflow
     - /var/run/docker.sock:/var/run/docker.sock  # Docker socket para DockerOperator
@@ -161,7 +161,9 @@ services:
   airflow-worker:
     <<: *airflow-common
     command: celery worker
-    hostname: ${HOSTNAME:-airflow-worker}
+    # hostname fixo: ${HOSTNAME} herdava o hostname do container do Easypanel no deploy,
+    # fazendo o webserver buscar os logs no container errado
+    hostname: airflow-worker
     healthcheck:
       test:
         - "CMD-SHELL"
