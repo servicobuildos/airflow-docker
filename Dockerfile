@@ -4,15 +4,16 @@ ENV IMAGE_BUILD_VERSION 2.4.3.0
 
 USER root
 
-# usa o snapshot fixo do Debian (já referenciado no sources.list da imagem) em vez do
-# mirror "live", que remove pacotes antigos do bullseye e causa 404 em apt install.
+# usa o archive.debian.org (arquivo permanente do Debian) para o bullseye: o mirror "live"
+# remove pacotes antigos (404 no apt install) e o snapshot.debian.org é lento/instável
+# (derrubava o build com exit code 100).
 # remove o repo do PostgreSQL (pgdg), que não publica mais bullseye e quebra o apt update
-RUN sed -i \
-        -e 's|^# deb http://snapshot.debian.org|deb http://snapshot.debian.org|g' \
-        -e '/^deb http:\/\/deb.debian.org/d' \
-        /etc/apt/sources.list && \
+RUN printf '%s\n' \
+        'deb http://archive.debian.org/debian bullseye main' \
+        'deb http://archive.debian.org/debian bullseye-updates main' \
+        'deb http://archive.debian.org/debian-security bullseye-security main' \
+        > /etc/apt/sources.list && \
     rm -f /etc/apt/sources.list.d/pgdg.list && \
-    # Retries/Timeout: o snapshot.debian.org é instável e derrubava o build com exit code 100
     apt -o Acquire::Check-Valid-Until=false \
         -o Acquire::Retries=5 \
         -o Acquire::http::Timeout=60 \
